@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_sm_user_session_user,sm.user.session.user,model_sm_user_session,group_session_user,1,0,0,0
+access_sm_user_session_manager,sm.user.session.manager,model_sm_user_session,group_session_manager,1,1,1,1
+access_sm_audit_log_user,sm.audit.log.user,model_sm_audit_log,group_session_user,1,0,0,0
+access_sm_audit_log_manager,sm.audit.log.manager,model_sm_audit_log,group_session_manager,1,1,1,1

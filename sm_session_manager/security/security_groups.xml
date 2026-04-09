@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Categories -->
+    <record id="module_category_session_manager" model="ir.module.category">
+        <field name="name">Session Manager</field>
+        <field name="description">Access rights for Session Manager &amp; User Audit module</field>
+        <field name="sequence">100</field>
+    </record>
+
+    <!-- User Group -->
+    <record id="group_session_user" model="res.groups">
+        <field name="name">User</field>
+        <field name="category_id" ref="module_category_session_manager"/>
+        <field name="comment">Can view own sessions and activity logs only.</field>
+    </record>
+
+    <!-- Manager Group (implies User) -->
+    <record id="group_session_manager" model="res.groups">
+        <field name="name">Manager</field>
+        <field name="category_id" ref="module_category_session_manager"/>
+        <field name="implied_ids" eval="[(4, ref('group_session_user'))]"/>
+        <field name="comment">Can view all sessions, all logs, kill any session, manage settings.</field>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+
+    <!-- Record Rules -->
+
+    <!-- Session: User can only see own sessions -->
+    <record id="rule_session_user_own" model="ir.rule">
+        <field name="name">User Session: Own Only</field>
+        <field name="model_id" ref="model_sm_user_session"/>
+        <field name="domain_force">[('user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_session_user'))]"/>
+    </record>
+
+    <!-- Session: Manager can see all -->
+    <record id="rule_session_manager_all" model="ir.rule">
+        <field name="name">Manager Session: All</field>
+        <field name="model_id" ref="model_sm_user_session"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_session_manager'))]"/>
+    </record>
+
+    <!-- Audit Log: User can only see own logs -->
+    <record id="rule_audit_log_user_own" model="ir.rule">
+        <field name="name">User Audit Log: Own Only</field>
+        <field name="model_id" ref="model_sm_audit_log"/>
+        <field name="domain_force">[('user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_session_user'))]"/>
+    </record>
+
+    <!-- Audit Log: Manager can see all -->
+    <record id="rule_audit_log_manager_all" model="ir.rule">
+        <field name="name">Manager Audit Log: All</field>
+        <field name="model_id" ref="model_sm_audit_log"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_session_manager'))]"/>
+    </record>
+
+</odoo>

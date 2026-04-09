@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Top Level Menu -->
+    <menuitem id="menu_sm_session_manager_root"
+        name="Session Manager"
+        web_icon="sm_session_manager,static/description/icon.png"
+        groups="sm_session_manager.group_session_user"
+        sequence="300"/>
+
+    <!-- Sessions Menu -->
+    <menuitem id="menu_sm_sessions"
+        name="Sessions"
+        parent="menu_sm_session_manager_root"
+        action="action_sm_user_session"
+        sequence="10"/>
+
+    <!-- Activity Logs Menu -->
+    <menuitem id="menu_sm_audit_logs"
+        name="Activity Logs"
+        parent="menu_sm_session_manager_root"
+        action="action_sm_audit_log"
+        sequence="20"/>
+
+    <!-- Configuration Menu -->
+    <menuitem id="menu_sm_configuration"
+        name="Configuration"
+        parent="menu_sm_session_manager_root"
+        groups="sm_session_manager.group_session_manager"
+        sequence="90"/>
+
+    <!-- Settings Menu -->
+    <menuitem id="menu_sm_settings"
+        name="Settings"
+        parent="menu_sm_configuration"
+        action="base_setup.action_general_configuration"
+        sequence="10"/>
+
+</odoo>

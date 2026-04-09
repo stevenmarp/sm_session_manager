@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Cron: Auto Kill Expired Sessions -->
+    <record id="cron_auto_kill_sessions" model="ir.cron">
+        <field name="name">Session Manager: Auto Kill Expired Sessions</field>
+        <field name="model_id" ref="model_sm_user_session"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_auto_kill_sessions()</field>
+        <field name="interval_number">30</field>
+        <field name="interval_type">minutes</field>
+    </record>
+
+    <!-- Cron: Cleanup Old Sessions -->
+    <record id="cron_cleanup_old_sessions" model="ir.cron">
+        <field name="name">Session Manager: Cleanup Old Sessions</field>
+        <field name="model_id" ref="model_sm_user_session"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_cleanup_old_sessions()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+    </record>
+
+    <!-- Cron: Cleanup Old Audit Logs -->
+    <record id="cron_cleanup_old_audit_logs" model="ir.cron">
+        <field name="name">Session Manager: Cleanup Old Audit Logs</field>
+        <field name="model_id" ref="model_sm_audit_log"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_cleanup_old_logs()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+    </record>
+
+</odoo>

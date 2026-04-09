@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ==================== SESSION TREE VIEW ==================== -->
+    <record id="view_sm_user_session_list" model="ir.ui.view">
+        <field name="name">sm.user.session.list</field>
+        <field name="model">sm.user.session</field>
+        <field name="arch" type="xml">
+            <list string="User Sessions" decoration-success="state == 'active'" decoration-muted="state in ('expired', 'killed')">
+                <field name="user_id"/>
+                <field name="login_date"/>
+                <field name="last_activity"/>
+                <field name="logout_date"/>
+                <field name="ip_address"/>
+                <field name="browser"/>
+                <field name="operating_system"/>
+                <field name="device"/>
+                <field name="geo_city"/>
+                <field name="geo_country"/>
+                <field name="state" widget="badge"
+                    decoration-success="state == 'active'"
+                    decoration-danger="state == 'killed'"
+                    decoration-warning="state == 'expired'"/>
+                <field name="audit_log_count" string="Activities"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ==================== SESSION FORM VIEW ==================== -->
+    <record id="view_sm_user_session_form" model="ir.ui.view">
+        <field name="name">sm.user.session.form</field>
+        <field name="model">sm.user.session</field>
+        <field name="arch" type="xml">
+            <form string="User Session" create="false">
+                <header>
+                    <button name="action_kill_session" type="object"
+                        string="Kill Session" class="btn-danger"
+                        invisible="state != 'active'"
+                        confirm="Are you sure you want to force-logout this session?"/>
+                    <field name="state" widget="statusbar" statusbar_visible="active,expired,killed"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_audit_logs" type="object"
+                            class="oe_stat_button" icon="fa-history">
+                            <field name="audit_log_count" widget="statinfo" string="Activities"/>
+                        </button>
+                    </div>
+                    <group>
+                        <group string="Session Info">
+                            <field name="user_id"/>
+                            <field name="session_id"/>
+                            <field name="login_date"/>
+                            <field name="logout_date"/>
+                            <field name="last_activity"/>
+                        </group>
+                        <group string="Device Info">
+                            <field name="ip_address"/>
+                            <field name="browser"/>
+                            <field name="operating_system"/>
+                            <field name="device"/>
+                            <field name="is_mobile"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Location">
+                            <field name="geo_city"/>
+                            <field name="geo_country"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Activity Logs" name="audit_logs">
+                            <field name="audit_log_ids" readonly="1">
+                                <list>
+                                    <field name="timestamp"/>
+                                    <field name="operation" widget="badge"
+                                        decoration-success="operation == 'create'"
+                                        decoration-info="operation == 'read'"
+                                        decoration-warning="operation == 'write'"
+                                        decoration-danger="operation == 'unlink'"/>
+                                    <field name="model_description"/>
+                                    <field name="res_name"/>
+                                    <field name="field_changes" optional="hide"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Raw User Agent" name="raw_ua">
+                            <field name="user_agent" readonly="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ==================== SESSION SEARCH VIEW ==================== -->
+    <record id="view_sm_user_session_search" model="ir.ui.view">
+        <field name="name">sm.user.session.search</field>
+        <field name="model">sm.user.session</field>
+        <field name="arch" type="xml">
+            <search string="Search Sessions">
+                <field name="user_id"/>
+                <field name="ip_address"/>
+                <field name="browser"/>
+                <field name="geo_country"/>
+                <filter name="filter_active" string="Active" domain="[('state', '=', 'active')]"/>
+                <filter name="filter_expired" string="Expired" domain="[('state', '=', 'expired')]"/>
+                <filter name="filter_killed" string="Killed" domain="[('state', '=', 'killed')]"/>
+                <separator/>
+                <filter name="filter_today" string="Today" domain="[('login_date', '&gt;=', (context_today()).strftime('%%Y-%%m-%%d'))]"/>
+                <filter name="filter_this_week" string="This Week" domain="[('login_date', '&gt;=', (context_today() - datetime.timedelta(days=7)).strftime('%%Y-%%m-%%d'))]"/>
+                <separator/>
+                <filter name="filter_mobile" string="Mobile" domain="[('is_mobile', '=', True)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_user" string="User" context="{'group_by': 'user_id'}"/>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_browser" string="Browser" context="{'group_by': 'browser'}"/>
+                    <filter name="group_os" string="OS" context="{'group_by': 'operating_system'}"/>
+                    <filter name="group_country" string="Country" context="{'group_by': 'geo_country'}"/>
+                    <filter name="group_date" string="Login Date" context="{'group_by': 'login_date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ==================== SESSION KANBAN VIEW ==================== -->
+    <record id="view_sm_user_session_kanban" model="ir.ui.view">
+        <field name="name">sm.user.session.kanban</field>
+        <field name="model">sm.user.session</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile" create="false">
+                <field name="user_id"/>
+                <field name="ip_address"/>
+                <field name="browser"/>
+                <field name="operating_system"/>
+                <field name="state"/>
+                <field name="login_date"/>
+                <field name="geo_country"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="d-flex justify-content-between">
+                            <strong><field name="user_id"/></strong>
+                            <field name="state" widget="badge"
+                                decoration-success="state == 'active'"
+                                decoration-danger="state == 'killed'"
+                                decoration-warning="state == 'expired'"/>
+                        </div>
+                        <div class="text-muted">
+                            <i class="fa fa-globe me-1" title="IP Address"/><field name="ip_address"/>
+                            <t t-if="record.geo_country.raw_value"> - <field name="geo_country"/></t>
+                        </div>
+                        <div class="text-muted">
+                            <i class="fa fa-desktop me-1" title="Device"/><field name="browser"/> / <field name="operating_system"/>
+                        </div>
+                        <div class="text-muted">
+                            <i class="fa fa-clock-o me-1" title="Login Date"/><field name="login_date"/>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ==================== SESSION ACTION ==================== -->
+    <record id="action_sm_user_session" model="ir.actions.act_window">
+        <field name="name">Sessions</field>
+        <field name="res_model">sm.user.session</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="search_view_id" ref="view_sm_user_session_search"/>
+        <field name="context">{'search_default_filter_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No sessions recorded yet.
+            </p>
+            <p>
+                User sessions will be automatically tracked when users log in.
+            </p>
+        </field>
+    </record>
+
+</odoo>

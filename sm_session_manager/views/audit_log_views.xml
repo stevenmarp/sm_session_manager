@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ==================== AUDIT LOG TREE VIEW ==================== -->
+    <record id="view_sm_audit_log_list" model="ir.ui.view">
+        <field name="name">sm.audit.log.list</field>
+        <field name="model">sm.audit.log</field>
+        <field name="arch" type="xml">
+            <list string="User Activity Logs" create="false" edit="false"
+                decoration-success="operation == 'create'"
+                decoration-warning="operation == 'write'"
+                decoration-danger="operation == 'unlink'"
+                decoration-info="operation == 'read'">
+                <field name="timestamp"/>
+                <field name="user_id"/>
+                <field name="operation" widget="badge"
+                    decoration-success="operation == 'create'"
+                    decoration-info="operation == 'read'"
+                    decoration-warning="operation == 'write'"
+                    decoration-danger="operation == 'unlink'"/>
+                <field name="model_description"/>
+                <field name="model_name" optional="hide"/>
+                <field name="res_id"/>
+                <field name="res_name"/>
+                <field name="ip_address"/>
+                <field name="session_id" optional="hide"/>
+                <field name="field_changes" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ==================== AUDIT LOG FORM VIEW ==================== -->
+    <record id="view_sm_audit_log_form" model="ir.ui.view">
+        <field name="name">sm.audit.log.form</field>
+        <field name="model">sm.audit.log</field>
+        <field name="arch" type="xml">
+            <form string="Activity Log" create="false" edit="false">
+                <sheet>
+                    <group>
+                        <group string="Activity Details">
+                            <field name="user_id"/>
+                            <field name="operation"/>
+                            <field name="timestamp"/>
+                            <field name="session_id"/>
+                        </group>
+                        <group string="Record Info">
+                            <field name="model_name"/>
+                            <field name="model_description"/>
+                            <field name="res_id"/>
+                            <field name="res_name"/>
+                            <field name="ip_address"/>
+                        </group>
+                    </group>
+                    <group string="Field Changes">
+                        <field name="field_changes" nolabel="1" colspan="2"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ==================== AUDIT LOG SEARCH VIEW ==================== -->
+    <record id="view_sm_audit_log_search" model="ir.ui.view">
+        <field name="name">sm.audit.log.search</field>
+        <field name="model">sm.audit.log</field>
+        <field name="arch" type="xml">
+            <search string="Search Activity Logs">
+                <field name="user_id"/>
+                <field name="model_name"/>
+                <field name="model_description"/>
+                <field name="res_name"/>
+                <filter name="filter_create" string="Create" domain="[('operation', '=', 'create')]"/>
+                <filter name="filter_write" string="Update" domain="[('operation', '=', 'write')]"/>
+                <filter name="filter_unlink" string="Delete" domain="[('operation', '=', 'unlink')]"/>
+                <separator/>
+                <filter name="filter_today" string="Today" domain="[('timestamp', '&gt;=', (context_today()).strftime('%%Y-%%m-%%d'))]"/>
+                <filter name="filter_this_week" string="This Week" domain="[('timestamp', '&gt;=', (context_today() - datetime.timedelta(days=7)).strftime('%%Y-%%m-%%d'))]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_user" string="User" context="{'group_by': 'user_id'}"/>
+                    <filter name="group_operation" string="Operation" context="{'group_by': 'operation'}"/>
+                    <filter name="group_model" string="Model" context="{'group_by': 'model_name'}"/>
+                    <filter name="group_date" string="Date" context="{'group_by': 'timestamp:day'}"/>
+                    <filter name="group_session" string="Session" context="{'group_by': 'session_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ==================== AUDIT LOG PIVOT VIEW ==================== -->
+    <record id="view_sm_audit_log_pivot" model="ir.ui.view">
+        <field name="name">sm.audit.log.pivot</field>
+        <field name="model">sm.audit.log</field>
+        <field name="arch" type="xml">
+            <pivot string="Activity Statistics">
+                <field name="user_id" type="row"/>
+                <field name="operation" type="col"/>
+                <field name="timestamp" interval="day" type="row"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- ==================== AUDIT LOG GRAPH VIEW ==================== -->
+    <record id="view_sm_audit_log_graph" model="ir.ui.view">
+        <field name="name">sm.audit.log.graph</field>
+        <field name="model">sm.audit.log</field>
+        <field name="arch" type="xml">
+            <graph string="Activity Graph" type="bar">
+                <field name="timestamp" interval="day"/>
+                <field name="operation" type="col"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- ==================== AUDIT LOG ACTION ==================== -->
+    <record id="action_sm_audit_log" model="ir.actions.act_window">
+        <field name="name">Activity Logs</field>
+        <field name="res_model">sm.audit.log</field>
+        <field name="view_mode">list,form,pivot,graph</field>
+        <field name="search_view_id" ref="view_sm_audit_log_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No activity logs recorded yet.
+            </p>
+            <p>
+                User activities (create, update, delete) will be automatically tracked.
+            </p>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_res_config_settings_form" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.sm_session_manager</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Session Manager" string="Session Manager" name="sm_session_manager" groups="sm_session_manager.group_session_manager">
+                    <block title="Login Notifications" name="login_notifications">
+                        <setting string="Email on New Login" help="Send email notification to users when a new login is detected.">
+                            <field name="sm_notify_new_login"/>
+                        </setting>
+                    </block>
+                    <block title="Session Auto-Kill" name="session_auto_kill">
+                        <setting string="Auto Kill Mode" help="Automatically terminate sessions based on duration.">
+                            <field name="sm_auto_kill_mode" widget="radio"/>
+                        </setting>
+                        <setting string="Session Duration (Hours)" help="Duration after which sessions are auto-killed.">
+                            <field name="sm_session_duration_hours"/>
+                        </setting>
+                    </block>
+                    <block title="Data Cleanup" name="data_cleanup">
+                        <setting string="Cleanup Sessions" help="Remove old session records after specified days.">
+                            <field name="sm_cleanup_days"/> <span>days</span>
+                        </setting>
+                        <setting string="Cleanup Audit Logs" help="Remove old audit logs after specified days.">
+                            <field name="sm_log_cleanup_days"/> <span>days</span>
+                        </setting>
+                    </block>
+                    <block title="Activity Tracking" name="activity_tracking">
+                        <setting string="Track Operations" help="Automatically track create, update, and delete operations by all users.">
+                            <field name="sm_track_operations"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

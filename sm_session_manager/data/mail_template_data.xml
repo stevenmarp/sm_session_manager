@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Email template for new login notification -->
+    <record id="mail_template_new_login" model="mail.template">
+        <field name="name">Session Manager: New Login Notification</field>
+        <field name="model_id" ref="model_sm_user_session"/>
+        <field name="email_from">{{ (object.user_id.company_id.email or user.email) }}</field>
+        <field name="email_to">{{ object.user_id.email }}</field>
+        <field name="subject">Security Alert: New Login Detected - {{ object.user_id.name }}</field>
+        <field name="body_html" type="html">
+<div style="margin: 0px; padding: 0px; font-family: Arial, sans-serif;">
+    <table style="width: 600px; margin: 0 auto; border-collapse: collapse;">
+        <tr>
+            <td style="background-color: #875A7B; padding: 20px; text-align: center; color: white;">
+                <h2 style="margin: 0;">🔐 New Login Detected</h2>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 30px; background-color: #f9f9f9;">
+                <p>Hello <strong>{{ object.user_id.name }}</strong>,</p>
+                <p>A new login to your account was detected with the following details:</p>
+                <table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
+                    <tr>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd; font-weight: bold; width: 40%;">Date &amp; Time</td>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ object.login_date }}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd; font-weight: bold;">IP Address</td>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ object.ip_address or 'Unknown' }}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd; font-weight: bold;">Browser</td>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ object.browser or 'Unknown' }}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd; font-weight: bold;">Operating System</td>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ object.operating_system or 'Unknown' }}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd; font-weight: bold;">Device</td>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ object.device or 'Unknown' }}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd; font-weight: bold;">Location</td>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ object.geo_city or '' }} {{ object.geo_country or 'Unknown' }}</td>
+                    </tr>
+                </table>
+                <p style="color: #e74c3c;"><strong>If this was not you</strong>, please change your password immediately and contact your system administrator.</p>
+                <p>You can manage your active sessions from the Session Manager menu.</p>
+            </td>
+        </tr>
+        <tr>
+            <td style="background-color: #eeeeee; padding: 15px; text-align: center; font-size: 12px; color: #888;">
+                This is an automated security notification from Session Manager.
+            </td>
+        </tr>
+    </table>
+</div>
+        </field>
+    </record>
+
+</odoo>
